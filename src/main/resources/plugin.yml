@@ -1,0 +1,10 @@
+name: Dao
+version: ${project.version}
+main: software.angus.dao.Dao
+api-version: 1.16
+authors: [Flamezy]
+description: Attempt on recreating cultivation
+commands:
+  spiritsword:
+    usage: /spiritsword
+    description: Gives the spirit sword
