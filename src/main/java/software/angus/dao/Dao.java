@@ -3,11 +3,13 @@ package software.angus.dao;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import software.angus.dao.weapons.SpiritSword;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 public final class Dao extends JavaPlugin {
@@ -16,6 +18,7 @@ public final class Dao extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
         this.getServer().getPluginManager().registerEvents(new Power(), this);
+        this.getServer().getPluginManager().registerEvents(new Enchants(), this);
         this.getCommand("spiritsword").setExecutor(new SpiritSword());
 
         //Bigger health action bar
