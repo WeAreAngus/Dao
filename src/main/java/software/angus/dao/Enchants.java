@@ -14,6 +14,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +74,7 @@ public class Enchants implements Listener {
             if(!container.has(keyPoisonDamage, PersistentDataType.DOUBLE)) return;
 
             List<ItemStack> Equipment = getEQ(entityDEF);
-            double defense = 20;
+            double defense = 0;
             double toughness = 0;
             double damage = getPD(itemStackATT, keyPoisonDamage);
             if(!Equipment.isEmpty()) {
@@ -84,14 +86,10 @@ public class Enchants implements Listener {
                 }
             }
             double damageTaken = damage * (1- ((Math.min(20, Math.max((defense/5), (defense-(damage/(2+(toughness/4)))))))/25));
-
-            if(e.getDamager() instanceof Player) {
-                Player player = (Player) e.getDamager();
-                player.sendMessage("You've dealt " + damageTaken + " poison damage ");
-            }
             double remainderHealth = entityDEF.getHealth() - damageTaken;
             if(damageTaken > entityDEF.getHealth()) remainderHealth = 0;
             entityDEF.setHealth(remainderHealth);
+            entityDEF.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 10, 0));
         }
     }
 

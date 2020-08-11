@@ -32,17 +32,21 @@ public class SpiritSword implements CommandExecutor {
         ItemStack goldenSword = new ItemStack(Material.GOLDEN_SWORD);
         ItemMeta goldenSwordMeta = goldenSword.getItemMeta();
         goldenSwordMeta.setDisplayName(ChatColor.BLUE + "Spirit Sword");
-        //goldenSwordMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        goldenSwordMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         goldenSwordMeta.setUnbreakable(true);
-        int result = 0;
-        //int result = random.nextInt(100);
-        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", result,
+        
+        int resultphys = random.nextInt(50);
+        int resultpoison = random.nextInt(50);
+
+        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", resultphys,
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
+
         goldenSwordMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, damageModifier);
-        double poisonDamage = 10000;
-        ItemMeta goldenSwordMetaPoison = enchants.addPoisonDamage(goldenSwordMeta, poisonDamage);
+        ItemMeta goldenSwordMetaPoison = enchants.addPoisonDamage(goldenSwordMeta, resultpoison);
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.DARK_RED + String.valueOf(result) + ChatColor.BLUE + " Physical Damage");
+
+        lore.add(ChatColor.DARK_RED + String.valueOf(resultphys) + ChatColor.BLUE + " Physical Damage");
+        lore.add(ChatColor.DARK_GREEN + String.valueOf(resultpoison) + ChatColor.BLUE + " Poison Damage");
         goldenSwordMetaPoison.setLore(lore);
         goldenSword.setItemMeta(goldenSwordMetaPoison);
         return goldenSword;
