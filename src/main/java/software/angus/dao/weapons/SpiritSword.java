@@ -1,9 +1,7 @@
 package software.angus.dao.weapons;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.Command;
@@ -14,10 +12,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.java.JavaPlugin;
-import software.angus.dao.Dao;
 import software.angus.dao.Enchants;
 
 import java.util.ArrayList;
@@ -34,21 +28,28 @@ public class SpiritSword implements CommandExecutor {
         goldenSwordMeta.setDisplayName(ChatColor.BLUE + "Spirit Sword");
         goldenSwordMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         goldenSwordMeta.setUnbreakable(true);
-        
-        int resultphys = random.nextInt(50);
-        int resultpoison = random.nextInt(50);
 
-        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", resultphys,
+        int resultPhysical = random.nextInt(50);
+        int resultPoison = random.nextInt(50);
+        int resultFire = random.nextInt(50);
+        int resultIce = random.nextInt(50);
+
+        AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", resultPhysical,
                 AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
 
         goldenSwordMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, damageModifier);
-        ItemMeta goldenSwordMetaPoison = enchants.addPoisonDamage(goldenSwordMeta, resultpoison);
+        enchants.addPoisonDamage(goldenSwordMeta, resultPoison);
+        enchants.addFireDamage(goldenSwordMeta, resultFire);
+        enchants.addIceDamage(goldenSwordMeta, resultIce);
         List<String> lore = new ArrayList<>();
 
-        lore.add(ChatColor.DARK_RED + String.valueOf(resultphys) + ChatColor.BLUE + " Physical Damage");
-        lore.add(ChatColor.DARK_GREEN + String.valueOf(resultpoison) + ChatColor.BLUE + " Poison Damage");
-        goldenSwordMetaPoison.setLore(lore);
-        goldenSword.setItemMeta(goldenSwordMetaPoison);
+        lore.add(ChatColor.GRAY + String.valueOf(resultPhysical) + ChatColor.BLUE + " Physical Damage");
+        lore.add(ChatColor.DARK_GREEN + String.valueOf(resultPoison) + ChatColor.BLUE + " Poison Damage");
+        lore.add(ChatColor.DARK_RED + String.valueOf(resultFire) + ChatColor.BLUE + " Fire Damage");
+        lore.add(ChatColor.DARK_BLUE + String.valueOf(resultIce) + ChatColor.BLUE + " Ice Damage");
+
+        goldenSwordMeta.setLore(lore);
+        goldenSword.setItemMeta(goldenSwordMeta);
         return goldenSword;
     }
 
