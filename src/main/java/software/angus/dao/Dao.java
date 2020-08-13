@@ -6,18 +6,19 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import software.angus.dao.weapons.SpiritSword;
+import software.angus.dao.weapons.Broadsword;
 
 import java.util.Objects;
 
+@SuppressWarnings("ConstantConditions")
 public final class Dao extends JavaPlugin {
 
     @Override
     public void onEnable() {
         // Plugin startup logic
         this.getServer().getPluginManager().registerEvents(new Power(), this);
-        this.getServer().getPluginManager().registerEvents(new Enchants(), this);
-        this.getCommand("spiritsword").setExecutor(new SpiritSword());
+        this.getServer().getPluginManager().registerEvents(new DamageController(), this);
+        this.getCommand("broadsword").setExecutor(new Broadsword());
 
         //Bigger health action bar
         new BukkitRunnable() {
