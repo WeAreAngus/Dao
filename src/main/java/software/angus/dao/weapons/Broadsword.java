@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,19 +17,25 @@ public class Broadsword implements CommandExecutor {
     private ItemStack createItem() {
         Random random = new Random();
 
-        ItemStack goldenSword = new ItemStack(Material.GOLDEN_SWORD);
+        ItemStack woodenSword = new ItemStack(Material.WOODEN_SWORD);
 
         int resultPhysical = random.nextInt(50);
         int resultPoison = random.nextInt(50);
         int resultFire = random.nextInt(50);
         int resultIce = random.nextInt(50);
 
-        WeaponCreator weaponCreator = new WeaponCreator(goldenSword, "Spirit Sword", "Broadsword",
-                Quality.NORMAL, 10, resultPhysical, resultPoison,
-                resultFire, resultIce);
-        ItemMeta itemMeta = weaponCreator.build();
-        goldenSword.setItemMeta(itemMeta);
-        return goldenSword;
+        WeaponCreator weapon = new WeaponCreator();
+        weapon.setItemStack(woodenSword);
+        weapon.setWeaponName("Broken Sword");
+        weapon.setWeaponType("Broadsword");
+        weapon.setQuality(Quality.MYTHICAL);
+        weapon.setFireDamage(resultFire);
+        weapon.setIceDamage(resultIce);
+        weapon.setPhysicalDamage(resultPhysical);
+        weapon.setPoisonDamage(resultPoison);
+        ItemMeta itemMeta = weapon.build();
+        woodenSword.setItemMeta(itemMeta);
+        return woodenSword;
     }
 
     @Override

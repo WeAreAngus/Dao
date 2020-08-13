@@ -1,6 +1,7 @@
 package software.angus.dao.weapons;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.inventory.EquipmentSlot;
@@ -16,50 +17,83 @@ import java.util.List;
 import java.util.UUID;
 
 public class WeaponCreator {
-    ItemMeta weapon;
+
+    HashMap<Quality, String> ColourQuality= new HashMap<>();
+    HashMap<Quality, ChatColor> NameColour = new HashMap<>();
+    {
+        ColourQuality.put(Quality.NORMAL, ChatColor.WHITE + "" + ChatColor.BOLD + "NORMAL");
+        ColourQuality.put(Quality.RARE, ChatColor.BLUE + "" + ChatColor.BOLD + "RARE");
+        ColourQuality.put(Quality.EPIC, ChatColor.DARK_PURPLE + "" + ChatColor.BOLD + "EPIC");
+        ColourQuality.put(Quality.LEGENDARY, ChatColor.YELLOW + "" + ChatColor.BOLD + "LEGENDARY");
+        ColourQuality.put(Quality.MYTHICAL, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "" +
+                ChatColor.MAGIC + "M" + ChatColor.RESET + "" + ChatColor.BOLD + "" + ChatColor.LIGHT_PURPLE + "MYTHICAL" +
+                ChatColor.BOLD + "" + ChatColor.MAGIC + "M");
+    }
+    List<String> lore = new ArrayList<>();
+    ItemStack itemStack = new ItemStack(Material.WOODEN_SWORD);
     double PhysicalDamage = 0;
     double PoisonDamage = 0;
     double FireDamage = 0;
     double IceDamage = 0;
+    String weaponType;
+    String weaponName;
+    Quality quality = Quality.NORMAL;
+
+
+    public void setFireDamage(double fireDamage) {
+        this.FireDamage = fireDamage;
+    }
+    public void setIceDamage(double iceDamage) {
+        this.IceDamage = iceDamage;
+    }
+    public void setPoisonDamage(double poisonDamage) {
+        this.PoisonDamage = poisonDamage;
+    }
+    public void setPhysicalDamage(double physicalDamage) {
+        this.PhysicalDamage = physicalDamage;
+    }
+    public void setQuality(Quality quality) {
+        this.quality = quality;
+    }
+    public void setWeaponName(String weaponName) {
+        this.weaponName = weaponName;
+    }
+    public void setWeaponType(String weaponType) {
+        this.weaponType = weaponType;
+    }
+    public void setItemStack(ItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
 
     public ItemMeta build() {
-        return this.weapon;
-    }
-    public WeaponCreator(ItemStack itemStack, String itemName, String weaponType, Quality quality, double levelRequirement, double PhysicalDamage, double PoisonDamage, double FireDamage, double IceDamage) {
         ItemMeta itemMeta = itemStack.getItemMeta();
-        List<String> lore = new ArrayList<>();
-        HashMap<Quality, ChatColor> ColourQuality= new HashMap<>();
-
-                    ColourQuality.put(Quality.NORMAL, ChatColor.WHITE);ColourQuality.put(Quality.RARE, ChatColor.BLUE);
-                    ColourQuality.put(Quality.EPIC, ChatColor.DARK_PURPLE);ColourQuality.put(Quality.LEGENDARY, ChatColor.YELLOW);
-                    ColourQuality.put(Quality.MYTHICAL, ChatColor.LIGHT_PURPLE);
         itemMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-        itemMeta.setDisplayName(itemName);
-        lore.add(weaponType);
-        lore.add(ColourQuality.get(quality) + "Quality:" + quality.name());
-        lore.add("Level requirement:" + levelRequirement);
+        itemMeta.setDisplayName(weaponName);
 
-        if(PhysicalDamage != 0)   {
+        lore.add(weaponType);
+
+        if(this.PhysicalDamage != 0)   {
             AttributeModifier damageModifier = new AttributeModifier(UUID.randomUUID(), "generic.attackDamage", PhysicalDamage,
                     AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND);
             itemMeta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, damageModifier);
-            lore.add(ChatColor.BLUE + "ADDS " + PhysicalDamage + " to Physical Damage");
+            lore.add(ChatColor.BLUE + "ADDS " + Math.round(PhysicalDamage) + " to Physical Damage");
         }
-        if(PoisonDamage != 0) {
+        if(this.PoisonDamage != 0) {
             DamageAdder.addPoisonDamage(itemMeta, PoisonDamage);
-            lore.add(ChatColor.BLUE + "ADDS " + PoisonDamage + " to Poison Damage");
+            lore.add(ChatColor.BLUE + "ADDS " + Math.round(PoisonDamage) + " to Poison Damage");
         }
-        if(FireDamage != 0) {
+        if(this.FireDamage != 0) {
             DamageAdder.addFireDamage(itemMeta, FireDamage);
-            lore.add(ChatColor.BLUE + "ADDS " + FireDamage + " to Fire Damage");
+            lore.add(ChatColor.BLUE + "ADDS " + Math.round(FireDamage) + " to Fire Damage");
         }
-        if(IceDamage != 0) {
+        if(this.IceDamage != 0) {
             DamageAdder.addIceDamage(itemMeta, IceDamage);
-            lore.add(ChatColor.BLUE + "ADDS " + IceDamage + " to Ice Damage");
+            lore.add(ChatColor.BLUE + "ADDS " + Math.round(IceDamage) + " to Ice Damage");
         }
+        lore.add(ColourQuality.get(quality));
 
         itemMeta.setLore(lore);
 
-        this.weapon = itemMeta;
+        return itemMeta;
     }
 }
