@@ -27,8 +27,9 @@ public class Broadsword implements CommandExecutor {
         WeaponCreator weapon = new WeaponCreator();
         weapon.setItemStack(woodenSword);
         weapon.setWeaponName("Broken Sword");
-        weapon.setWeaponType("Broadsword");
         weapon.setQuality(Quality.MYTHICAL);
+        weapon.setCriticalChance(50);
+        weapon.setCriticalDamage(500);
         weapon.setFireDamage(resultFire);
         weapon.setIceDamage(resultIce);
         weapon.setPhysicalDamage(resultPhysical);

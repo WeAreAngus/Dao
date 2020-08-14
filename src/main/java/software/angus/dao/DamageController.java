@@ -21,6 +21,9 @@ import java.util.Objects;
 @SuppressWarnings("DuplicatedCode")
 public class DamageController implements Listener {
     Dao dao = JavaPlugin.getPlugin(Dao.class);
+    private final NamespacedKey keyPhysicalDamage = new NamespacedKey(dao, "physical_damage");
+    private final NamespacedKey keyPhysicalArmour = new NamespacedKey(dao, "physical_armour");
+    private final NamespacedKey keyPhysicalToughness = new NamespacedKey(dao, "physical_toughness");
     private final NamespacedKey keyPoisonDamage = new NamespacedKey(dao, "poison_damage");
     private final NamespacedKey keyPoisonArmour = new NamespacedKey(dao, "poison_armour");
     private final NamespacedKey keyPoisonToughness = new NamespacedKey(dao, "poison_toughness");
@@ -54,20 +57,21 @@ public class DamageController implements Listener {
         return Equipment;
     }
 
-    private void DamageHandler(EntityDamageByEntityEvent e, NamespacedKey keyDamage, NamespacedKey keyArmour, NamespacedKey keyToughness) {
+    private boolean DamageHandler(EntityDamageByEntityEvent e, NamespacedKey keyDamage, NamespacedKey keyArmour, NamespacedKey keyToughness) {
         LivingEntity entityATT = (LivingEntity) e.getDamager();
         LivingEntity entityDEF = (LivingEntity) e.getEntity();
         //noinspection ConstantConditions
         ItemStack itemStackATT = entityATT.getEquipment().getItemInMainHand();
         //noinspection ConstantConditions
-        if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return;
+        if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return false;
         PersistentDataContainer container = itemStackATT.getItemMeta().getPersistentDataContainer();
-        if(!container.has(keyPoisonDamage, PersistentDataType.DOUBLE)) return;
+        if(!container.has(keyPoisonDamage, PersistentDataType.DOUBLE)) return false;
 
         List<ItemStack> Equipment = getEQ(entityDEF);
         double defense = 0;
         double toughness = 0;
         double damage = getPD(itemStackATT, keyDamage);
+        if(damage <= 0) return false;
         if(!Equipment.isEmpty()) {
             for (ItemStack stack : Equipment) {
                 defense = +getPD(stack, keyArmour);
@@ -80,8 +84,19 @@ public class DamageController implements Listener {
         double remainderHealth = entityDEF.getHealth() - damageTaken;
         if(damageTaken > entityDEF.getHealth()) remainderHealth = 0;
         entityDEF.setHealth(remainderHealth);
+        return true;
     }
-
+    @EventHandler
+    public void OnPhysicalDamage(EntityDamageByEntityEvent e) {
+        if (e.getEntity() instanceof LivingEntity && e.getDamager() instanceof LivingEntity) {
+            @SuppressWarnings("DuplicatedCode")
+            LivingEntity entityATT = (LivingEntity) e.getDamager();
+            ItemStack itemStackATT = Objects.requireNonNull(entityATT.getEquipment()).getItemInMainHand();
+            //noinspection ConstantConditions
+            if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return;
+            DamageHandler(e, keyPhysicalDamage, keyPhysicalArmour, keyPhysicalToughness);
+        }
+    }
     @EventHandler
     public void OnPoisonDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof LivingEntity && e.getDamager() instanceof LivingEntity) {
@@ -91,8 +106,9 @@ public class DamageController implements Listener {
             ItemStack itemStackATT = Objects.requireNonNull(entityATT.getEquipment()).getItemInMainHand();
             //noinspection ConstantConditions
             if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return;
-            DamageHandler(e, keyPoisonDamage, keyPoisonArmour, keyPoisonToughness);
-            entityDEF.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 10, 0));
+            if(DamageHandler(e, keyPoisonDamage, keyPoisonArmour, keyPoisonToughness)) {
+                entityDEF.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 10, 0));
+            }
         }
     }
 
@@ -107,8 +123,9 @@ public class DamageController implements Listener {
             //noinspection ConstantConditions
             if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return;
 
-            DamageHandler(e, keyFireDamage, keyFireArmour, keyFireToughness);
-            entityDEF.setFireTicks(100);
+            if (DamageHandler(e, keyFireDamage, keyFireArmour, keyFireToughness)) {
+                entityDEF.setFireTicks(100);
+            }
         }
     }
 
@@ -121,8 +138,9 @@ public class DamageController implements Listener {
             ItemStack itemStackATT = Objects.requireNonNull(entityATT.getEquipment()).getItemInMainHand();
             //noinspection ConstantConditions
             if(itemStackATT == null || itemStackATT.getType() == Material.AIR) return;
-            DamageHandler(e, keyIceDamage, keyIceArmour, keyIceToughness);
-            entityDEF.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0));
+            if(DamageHandler(e, keyIceDamage, keyIceArmour, keyIceToughness)) {
+                entityDEF.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10, 0));
+            }
         }
     }
 }
